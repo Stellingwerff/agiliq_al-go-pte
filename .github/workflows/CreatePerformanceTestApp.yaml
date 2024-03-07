@@ -1,6 +1,6 @@
-﻿name: 'Create a new test app'
+﻿name: 'Create a new performance test app'
 
-run-name: "Create a new test app in [${{ github.ref_name }}]"
+run-name: "Create a new performance test app in [${{ github.ref_name }}]"
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ on:
       name:
         description: Name
         required: true
-        default: '<YourAppName>.Test'
+        default: '<YourAppName>.PerformanceTest'
       publisher:
         description: Publisher
         required: true
@@ -22,6 +22,10 @@ on:
         default: '50000..99999'
       sampleCode:
         description: Include Sample code?
+        type: boolean
+        default: true
+      sampleSuite:
+        description: Include Sample BCPT Suite?
         type: boolean
         default: true
       directCommit:
@@ -46,7 +50,7 @@ env:
   ALGoRepoSettings: ${{ vars.ALGoRepoSettings }}
 
 jobs:
-  CreateTestApp:
+  CreatePerformanceTestApp:
     needs: [ ]
     runs-on: [ windows-latest ]
     steps:
@@ -63,7 +67,7 @@ jobs:
         uses: microsoft/AL-Go-Actions/WorkflowInitialize@v4.1
         with:
           shell: powershell
-          eventId: "DO0095"
+          eventId: "DO0102"
 
       - name: Read settings
         uses: microsoft/AL-Go-Actions/ReadSettings@v4.1
@@ -86,11 +90,12 @@ jobs:
           token: ${{ steps.ReadSecrets.outputs.TokenForPush }}
           parentTelemetryScopeJson: ${{ steps.init.outputs.telemetryScopeJson }}
           project: ${{ github.event.inputs.project }}
-          type: 'Test App'
+          type: 'Performance Test App'
           name: ${{ github.event.inputs.name }}
           publisher: ${{ github.event.inputs.publisher }}
           idrange: ${{ github.event.inputs.idrange }}
           sampleCode: ${{ github.event.inputs.sampleCode }}
+          sampleSuite: ${{ github.event.inputs.sampleSuite }}
           directCommit: ${{ github.event.inputs.directCommit }}
 
       - name: Finalize the workflow
@@ -98,5 +103,5 @@ jobs:
         uses: microsoft/AL-Go-Actions/WorkflowPostProcess@v4.1
         with:
           shell: powershell
-          eventId: "DO0095"
+          eventId: "DO0102"
           telemetryScopeJson: ${{ steps.init.outputs.telemetryScopeJson }}
